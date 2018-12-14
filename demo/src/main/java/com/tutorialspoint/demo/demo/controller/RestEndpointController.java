@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,7 +30,7 @@ import com.tutorialspoint.demo.demo.model.Book;
 import com.tutorialspoint.demo.demo.service.ProductService;
 
 
-
+@RefreshScope
 @RestController
 public class RestEndpointController {
 
@@ -45,6 +44,12 @@ public class RestEndpointController {
 	@Value("${server.port}")
 	private String port;
 	
+	//leido del servidor de Spring Cloud Config!!
+    @Value("${welcome.message}")
+    String welcomeText;
+    
+    
+	
 	private static final String URL_API_BOOKS =
             "http://private-114e-booksapi.apiary-mock.com/books/";
 	
@@ -55,7 +60,12 @@ public class RestEndpointController {
 //		return builder.build();
 //	}
 	
-	
+	@RequestMapping(value = "/welcome")
+	@GetMapping
+	public String welcomeText() {
+		return welcomeText;
+	}
+
 	@RequestMapping(value="/")
 	public String hello() {
 	return "Hello World";

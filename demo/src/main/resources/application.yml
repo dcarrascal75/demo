@@ -1,0 +1,45 @@
+#Bastaria a�adir el keystore a tu truststore local
+#server.port: 8443
+#server.ssl.key-store: classpath:keystore-p12
+#server.ssl.key-store-password: tomcat
+#server.ssl.keyStoreType: PKCS12
+#server.ssl.keyAlias: tomcat
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+instance:
+    preferIpAddress: true
+    
+spring:
+  application:
+    name: demoservice
+  cloud:
+    config:
+       uri: http://localhost:8888
+
+server:
+  port: 9091
+ 
+#Actuator stuff
+management:
+  server:
+    port: 9001
+  endpoints:
+    web:
+      exposure:
+        include: shutdown,info,health,httptrace,features,configprops
+  endpoint:
+    shutdown:
+      enabled: true
+    configprops:
+      enabled: true
+    health:
+      enabled: true
+    httptrace:
+      enabled: true
+    features:
+      enabled: true
+   
+   
