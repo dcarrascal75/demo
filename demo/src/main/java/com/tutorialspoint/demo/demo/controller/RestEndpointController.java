@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,8 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tutorialspoint.demo.demo.exception.BookNotfoundException;
 import com.tutorialspoint.demo.demo.model.Book;
+import com.tutorialspoint.demo.demo.model.BookWrapper;
 import com.tutorialspoint.demo.demo.service.ProductService;
-
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RefreshScope
 @RestController
@@ -70,6 +73,14 @@ public class RestEndpointController {
 	public String hello() {
 	return "Hello World";
 	}
+	
+	
+	private void addSelfLink(BookWrapper resource){
+	    final BookWrapper person = methodOn(RestEndpointController.class).getPerson(resource.getName());
+	    final Link link = linkTo(person).withSelfRel();
+	    resource.add(link);
+	}
+	
 	
 	@RequestMapping(value="/book")
 	@GetMapping
