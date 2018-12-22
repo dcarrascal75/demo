@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,19 +78,45 @@ public class RestEndpointController {
 	}
 	
 	
+/*
 	private void addSelfLink(BookWrapper resource){
-	    final BookWrapper person = methodOn(RestEndpointController.class).getPerson(resource.getName());
-	    final Link link = linkTo(person).withSelfRel();
+	    final ResponseEntity<Book> book = methodOn(RestEndpointController.class).getOneBook(resource.getBookid()+"");
+	    final Link link = linkTo(book).withSelfRel();
 	    resource.add(link);
+	}
+*/
+	
+	
+	
+	//También puedo devolver directamente un objeto con el @ResponseBody
+	@RequestMapping(value="/book2")
+	@GetMapping
+	public @ResponseBody Book getProduct2(@RequestHeader("Accept") String accept) {
+		System.out.println("Llamada devuelve uno cualquiera");
+		System.out.println("accept " + accept);
+		    Book book = new Book();
+		    book.setTitle("book test!");
+			return book;
 	}
 	
 	
-	@RequestMapping(value="/book")
+	//T..pero lo natural sera devolver ResponseEntities
+	//Le puedo decir que admita peticiones en XML o en JSON.
+	//Eso vendrá en el header de la request: Accept: application/xml, por ejemplo
+	//El header nos indica qué es lo que quiere recibir.
+	//Para esto hay que meter jackson as dependency --> NECESARIO
+	//HAY que indicar el value en la peticion si lo hacemos asi
+	@RequestMapping(value="/book", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE} )
 	@GetMapping
-	public ResponseEntity<Object> getProduct() {
+	public ResponseEntity<Object> getProduct(@RequestHeader("Accept") String accept) {
 		System.out.println("Llamada devuelve uno cualquiera");
+		System.out.println("accept " + accept);
 		    Book book = new Book();
 		    book.setTitle("book test!");
+		    //cómo retornar HEADERS
+		    HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_XML);
+            
 			return new ResponseEntity<>(book, HttpStatus.OK);
 	}
 	 
